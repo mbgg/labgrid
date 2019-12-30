@@ -8,8 +8,8 @@ from ..factory import target_factory
 from ..protocol import PowerProtocol, DigitalOutputProtocol, ResetProtocol
 from ..resource import NetworkPowerPort
 from ..resource import YKUSHPowerPort
-from ..resource.remote import NetworkUSBPowerPort
-from ..resource.udev import USBPowerPort
+from ..resource.remote import NetworkUSBPowerPort, NetworkSISPMCTLPowerPort
+from ..resource.udev import USBPowerPort, SISPMCTLPowerPort
 from ..step import step
 from ..util.proxy import proxymanager
 from ..util.helper import processwrapper
@@ -59,6 +59,48 @@ class ManualPowerDriver(Driver, PowerResetMixin, PowerProtocol):
             "CYCLE the target {name} and press enter".format(name=self.name)
         )
 
+@target_factory.reg_driver
+@attr.s(eq=False)
+class SISPMCTLPowerDriver(Driver, PowerResetMixin, PowerProtocol):
+    """SISPMCTLPowerDriver - Driver using a SiS-PM (Silver Shield PM) to control a
+       target's power using the sispmctl tool - http://sispmctl.sourceforge.net/"""
+
+    bindings = {"port": {SISPMCTLPowerPort, NetworkSISPMCTLPowerPort}, }
+    delay = attr.ib(default=2.0, validator=attr.validators.instance_of(float))
+
+    def __attrs_post_init__(self):
+        super().__attrs_post_init__()
+        if self.target.env:
+            self.tool = self.target.env.config.get_tool('sispmctls') or 'sispmctl'
+        else:
+            self.tool = 'sispmctl'
+
+    @Driver.check_active
+    @step()
+    def on(self):
+        cmd = self.port.command_prefix + [
+            self.tool,
+            "-o",
+            str(self.port.index)
+        ]
+        processwrapper.check_output(cmd)
+
+    @Driver.check_active
+    @step()
+    def off(self):
+        cmd = self.port.command_prefix + [
+            self.tool,
+            "-f",
+            str(self.port.index)
+        ]
+        processwrapper.check_output(cmd)
+
+    @Driver.check_active
+    @step()
+    def cycle(self):
+            self.off()
+            time.sleep(self.delay)
+            self.on()
 
 @target_factory.reg_driver
 @attr.s(eq=False)
