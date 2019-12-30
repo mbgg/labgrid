@@ -11,6 +11,7 @@ from .udev import USBSDMuxDevice
 from .udev import USBPowerPort
 from .common import Resource, ResourceManager, ManagedResource
 from .ykushpowerport import YKUSHPowerPort
+from .sispmctlpowerport import SISPMCTLPowerPort
 from .xenamanager import XenaManager
 from .flashrom import Flashrom, NetworkFlashrom
 from .docker import DockerManager, DockerDaemon, DockerConstants
