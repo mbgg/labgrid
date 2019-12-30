@@ -693,9 +693,9 @@ class ClientSession(ApplicationSession):
         action = self.args.action
         delay = self.args.delay
         target = self._get_target(place)
-        from ..driver.powerdriver import NetworkPowerDriver, PDUDaemonDriver, USBPowerDriver
+        from ..driver.powerdriver import NetworkPowerDriver, PDUDaemonDriver, USBPowerDriver, SISPMCTLPowerDriver
         from ..resource.power import NetworkPowerPort, PDUDaemonPort
-        from ..resource.remote import NetworkUSBPowerPort
+        from ..resource.remote import NetworkUSBPowerPort, NetworkSISPMCTLPowerPort
         drv = None
         for resource in target.resources:
             if isinstance(resource, NetworkPowerPort):
@@ -709,6 +709,12 @@ class ClientSession(ApplicationSession):
                     drv = target.get_driver(USBPowerDriver)
                 except NoDriverFoundError:
                     drv = USBPowerDriver(target, name=None, delay=delay)
+                break
+            elif isinstance(resource, NetworkSISPMCTLPowerPort):
+                try:
+                    drv = target.get_driver(SISPMCTLPowerDriver)
+                except NoDriverFoundError:
+                    drv = SISPMCTLPowerDriver(target, name=None, delay=delay)
                 break
             elif isinstance(resource, PDUDaemonPort):
                 try:

@@ -56,6 +56,48 @@ class ManualPowerDriver(Driver, PowerResetMixin, PowerProtocol):
             "CYCLE the target {name} and press enter".format(name=self.name)
         )
 
+@target_factory.reg_driver
+@attr.s(eq=False)
+class SISPMCTLPowerDriver(Driver, PowerResetMixin, PowerProtocol):
+    """SISPMCTLPowerDriver - Driver using a SiS-PM (Silver Shield PM) to control a
+       target's power using the sispmctl tool - http://sispmctl.sourceforge.net/"""
+
+    bindings = {"port": {"SISPMCTLPowerPort", "NetworkSISPMCTLPowerPort"}, }
+    delay = attr.ib(default=2.0, validator=attr.validators.instance_of(float))
+
+    def __attrs_post_init__(self):
+        super().__attrs_post_init__()
+        if self.target.env:
+            self.tool = self.target.env.config.get_tool('sispmctl') or 'sispmctl'
+        else:
+            self.tool = 'sispmctl'
+
+    def _get_sispmctl_prefix(self):
+        prefix = self.port.command_prefix+[
+            self.tool,
+            "-U", "{0:03d}:{1:03d}".format(self.port.busnum, self.port.devnum),
+        ]
+
+        return prefix
+
+    @Driver.check_active
+    @step()
+    def on(self):
+        cmd = ['-o', str(self.port.index)]
+        processwrapper.check_output(self._get_sispmctl_prefix() + cmd)
+
+    @Driver.check_active
+    @step()
+    def off(self):
+        cmd = ['-f', str(self.port.index)]
+        processwrapper.check_output(self._get_sispmctl_prefix() + cmd)
+
+    @Driver.check_active
+    @step()
+    def cycle(self):
+            self.off()
+            time.sleep(self.delay)
+            self.on()
 
 @target_factory.reg_driver
 @attr.s(eq=False)
