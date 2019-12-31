@@ -7,9 +7,8 @@ import attr
 from ..factory import target_factory
 from ..protocol import PowerProtocol, DigitalOutputProtocol, ResetProtocol
 from ..resource import NetworkPowerPort
-from ..resource import YKUSHPowerPort
-from ..resource.remote import NetworkUSBPowerPort
-from ..resource.udev import USBPowerPort
+from ..resource.remote import NetworkUSBPowerPort, NetworkYKUSHPowerPort
+from ..resource.udev import USBPowerPort, YKUSHPowerPort
 from ..step import step
 from ..util.proxy import proxymanager
 from ..util.helper import processwrapper
@@ -185,7 +184,7 @@ class DigitalOutputPowerDriver(Driver, PowerResetMixin, PowerProtocol):
 class YKUSHPowerDriver(Driver, PowerResetMixin, PowerProtocol):
     """YKUSHPowerDriver - Driver using a YEPKIT YKUSH switchable USB hub
         to control a target's power - https://www.yepkit.com/products/ykush"""
-    bindings = {"port": YKUSHPowerPort, }
+    bindings = {"port": {YKUSHPowerPort, NetworkYKUSHPowerPort}, }
     delay = attr.ib(default=2.0, validator=attr.validators.instance_of(float))
 
 
