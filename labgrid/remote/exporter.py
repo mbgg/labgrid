@@ -209,7 +209,6 @@ class USBGenericExport(ResourceExport):
         local_cls_name = self.cls
         self.data['cls'] = "Network{}".format(self.cls)
         from ..resource import udev
-        from ..resource import ykushpowerport
         local_cls = getattr(udev, local_cls_name)
         self.local = local_cls(target=None, name=None, **self.local_params)
 

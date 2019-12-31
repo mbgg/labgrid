@@ -458,6 +458,29 @@ class USBPowerPort(USBResource):
 
 @target_factory.reg_resource
 @attr.s(eq=False)
+class YKUSHPowerPort(USBResource):
+    """This resource describes a SiS-PM (Silver Shield PM) Control power port.
+
+    Args:
+        serial (str): serial of the YKUSH device
+        index (int): port index
+    """
+    serial = attr.ib(default=None, validator=attr.validators.instance_of(str))
+    index = attr.ib(default=None, validator=attr.validators.instance_of(int),
+                    converter=int)
+
+    # Overwrite the avail attribute with our internal property
+    @property
+    def avail(self):
+        return bool(self.index)
+
+    # Forbid the USBResource super class to set the avail property
+    @avail.setter
+    def avail(self, prop):
+        pass
+
+@target_factory.reg_resource
+@attr.s(eq=False)
 class SISPMCTLPowerPort(USBResource):
     """This resource describes a SiS-PM (Silver Shield PM) Control power port.
 
