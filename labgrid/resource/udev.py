@@ -468,6 +468,27 @@ class USBPowerPort(USBResource):
 
 @target_factory.reg_resource
 @attr.s(eq=False)
+class YKUSHPowerPort(USBResource):
+    """This resource describes a YEPKIT YKUSH switchable USB hub.
+
+    Args:
+        serial (str): serial of the YKUSH device
+        index (int): port index
+    """
+    serial = attr.ib(default=None, validator=attr.validators.instance_of(str))
+    index = attr.ib(default=None, validator=attr.validators.instance_of(int),
+                    converter=int)
+
+    def filter_match(self, device):
+        match = (device.properties.get('ID_VENDOR_ID'), device.properties.get('ID_MODEL_ID'))
+
+        if match not in [("04d8", "f2f7")]:
+             return False
+
+        return super().filter_match(device)
+
+@target_factory.reg_resource
+@attr.s(eq=False)
 class USBVideo(USBResource):
     def __attrs_post_init__(self):
         self.match['SUBSYSTEM'] = 'video4linux'
