@@ -209,6 +209,16 @@ class NetworkUSBSDMuxDevice(RemoteUSBResource):
 
 @target_factory.reg_resource
 @attr.s(eq=False)
+class NetworkYKUSHPowerPort(RemoteUSBResource):
+    """The NetworkYKUSHPowerPort describes a remotely YEPKIT YKUSH switchable USB hub"""
+    index = attr.ib(default=None, validator=attr.validators.instance_of(int))
+    def __attrs_post_init__(self):
+        self.timeout = 10.0
+        super().__attrs_post_init__()
+
+
+@target_factory.reg_resource
+@attr.s(eq=False)
 class NetworkSISPMCTLPowerPort(RemoteUSBResource):
     """The NetworkSISPMCTLPowerPort describes a remotely accessible GEMBIRD power port"""
     index = attr.ib(default=None, validator=attr.validators.instance_of(int))
