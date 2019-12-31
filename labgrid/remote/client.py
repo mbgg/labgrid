@@ -716,7 +716,7 @@ class ClientSession(ApplicationSession):
                 except NoDriverFoundError:
                     drv = SISPMCTLPowerDriver(target, name=None, delay=delay)
                 break
-             elif isinstance(resource, NetworkYKUSHPowerPort):
+            elif isinstance(resource, NetworkYKUSHPowerPort):
                 try:
                     drv = target.get_driver(YKUSHPowerDriver)
                 except NoDriverFoundError:
