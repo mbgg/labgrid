@@ -224,6 +224,13 @@ class USBResource(ManagedResource):
 @target_factory.reg_resource
 @attr.s(eq=False)
 class USBSerialPort(USBResource, SerialPort):
+    """This resource describes a USB serial port.
+
+    Args:
+        speed (int): baudrate
+    """
+    speed = attr.ib(default=115200, validator=attr.validators.instance_of(int))
+
     def __attrs_post_init__(self):
         self.match['SUBSYSTEM'] = 'tty'
         self.match['@SUBSYSTEM'] = 'usb'
