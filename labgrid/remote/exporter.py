@@ -138,7 +138,7 @@ class USBSerialPortExport(ResourceExport):
         return {
             'host': self.host,
             'port': self.port,
-            'speed': self.speed,
+            'speed': self.local.speed,
             'extra': {
                 'path': self.local.port,
             }
@@ -156,7 +156,7 @@ class USBSerialPortExport(ResourceExport):
             '-n',
             '-C',
             '{}:telnet:0:{}:{} 8DATABITS NONE 1STOPBIT LOCAL'.format(
-                self.port, start_params['path'], self.speed
+                self.port, start_params['path'], self.local.speed
             ),
         ])
         self.logger.info("started ser2net for %s on port %d", start_params['path'], self.port)
