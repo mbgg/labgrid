@@ -131,6 +131,7 @@ class USBSerialPortExport(ResourceExport):
     def _get_start_params(self):
         return {
             'path': self.local.port,
+            'speed': self.local.speed,
         }
 
     def _get_params(self):
