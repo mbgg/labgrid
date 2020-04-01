@@ -75,25 +75,25 @@ class SISPMCTLPowerDriver(Driver, PowerResetMixin, PowerProtocol):
         else:
             self.tool = 'sispmctl'
 
+    def _get_sispmctl_prefix(self):
+        prefix = self.port.command_prefix+[
+            self.tool,
+            "-U", "{0:03d}:{1:03d}".format(self.port.busnum, self.port.devnum),
+        ]
+
+        return prefix
+
     @Driver.check_active
     @step()
     def on(self):
-        cmd = self.port.command_prefix + [
-            self.tool,
-            "-o",
-            str(self.port.index)
-        ]
-        processwrapper.check_output(cmd)
+        cmd = ['-o', str(self.port.index)]
+        processwrapper.check_output(self._get_sispmctl_prefix() + cmd)
 
     @Driver.check_active
     @step()
     def off(self):
-        cmd = self.port.command_prefix + [
-            self.tool,
-            "-f",
-            str(self.port.index)
-        ]
-        processwrapper.check_output(cmd)
+        cmd = ['-f', str(self.port.index)]
+        processwrapper.check_output(self._get_sispmctl_prefix() + cmd)
 
     @Driver.check_active
     @step()
