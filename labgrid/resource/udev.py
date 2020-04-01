@@ -463,10 +463,8 @@ class SISPMCTLPowerPort(USBResource):
 
     Args:
         index (int): port index
-        serial (str): serial number of device
     """
     index = attr.ib(default=None, validator=attr.validators.instance_of(int))
-    serial = attr.ib(default=None, validator=attr.validators.instance_of(str))
 
     def filter_match(self, device):
         match = (device.properties.get('ID_VENDOR_ID'), device.properties.get('ID_MODEL_ID'))

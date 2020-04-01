@@ -80,8 +80,6 @@ class SISPMCTLPowerDriver(Driver, PowerResetMixin, PowerProtocol):
     def on(self):
         cmd = self.port.command_prefix + [
             self.tool,
-            "-D",
-            self.port.serial,
             "-o",
             str(self.port.index)
         ]
@@ -92,8 +90,6 @@ class SISPMCTLPowerDriver(Driver, PowerResetMixin, PowerProtocol):
     def off(self):
         cmd = self.port.command_prefix + [
             self.tool,
-            "-D",
-            self.port.serial,
             "-f",
             str(self.port.index)
         ]
