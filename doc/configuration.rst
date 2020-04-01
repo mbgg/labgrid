@@ -176,6 +176,27 @@ The example describes port 1 on the hub with the ID_PATH
 Used by:
   - `USBPowerDriver`_
 
+SISPMCTLPowerPort
++++++++++++++++++
+A SISPMCTLPowerPort describes a GEMBIRD SiS-PM Controle as supported by
+`sispmctl <https://sourceforge.net/projects/sispmctl/>`_.
+
+.. code-block:: yaml
+
+   SISPMCTLPowerPort:
+     match:
+       ID_PATH: platform-1c1a400.usb-usb-0:2
+     index: 1
+
+The example describes port 1 on the hub with the ID_PATH
+"platform-1c1a400.usb-usb-0:2".
+(use ``udevadm info /sys/bus/usb/devices/...`` to find the ID_PATH value)
+
+- index (int): number of the port to switch
+
+Used by:
+  - `SISPMCTLPowerDriver`_
+
 ModbusTCPCoil
 ~~~~~~~~~~~~~
 A ModbusTCPCoil describes a coil accessible via ModbusTCP.
@@ -1178,6 +1199,25 @@ Implements:
 .. code-block:: yaml
 
    USBPowerPort:
+     delay: 5.0
+
+Arguments:
+  - delay (float): optional delay in seconds between off and on
+
+SISPMCTLPowerDriver
+~~~~~~~~~~~~~~~~~~~
+A SISPMCTLPowerDriver controls a `SISPMCTLPowerPort`, allowing control of the target
+power state without user interaction.
+
+Binds to:
+  - `SISPMCTLPowerPort`_
+
+Implements:
+  - :any:`PowerProtocol`
+
+.. code-block:: yaml
+
+   SISPMCTLPowerPort:
      delay: 5.0
 
 Arguments:
