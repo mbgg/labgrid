@@ -479,15 +479,13 @@ class YKUSHPowerPort(USBResource):
     index = attr.ib(default=None, validator=attr.validators.instance_of(int),
                     converter=int)
 
-    # Overwrite the avail attribute with our internal property
-    @property
-    def avail(self):
-        return bool(self.index)
+    def filter_match(self, device):
+        match = (device.properties.get('ID_VENDOR_ID'), device.properties.get('ID_MODEL_ID'))
 
-    # Forbid the USBResource super class to set the avail property
-    @avail.setter
-    def avail(self, prop):
-        pass
+        if match not in [("04d8", "f2f7")]:
+             return False
+
+        return super().filter_match(device)
 
 @target_factory.reg_resource
 @attr.s(eq=False)
