@@ -188,20 +188,30 @@ class YKUSHPowerDriver(Driver, PowerResetMixin, PowerProtocol):
 
     def __attrs_post_init__(self):
         super().__attrs_post_init__()
-        # uses the YKUSH pykush interface from here:
-        # https://github.com/Yepkit/pykush
-        self.pykush_mod = import_module('pykush.pykush')
-        self.pykush = self.pykush_mod.YKUSH(serial=self.port.serial)
+        if self.target.env:
+            self.tool = self.target.env.config.get_tool('ykush') or 'ykushcmd'
+        else:
+            self.tool = 'ykushcmd'
+
+    def _get_ykushcmd_prefix(self):
+        prefix = self.port.command_prefix+[
+            self.tool,
+            "-s", str(self.port.serial),
+        ]
+
+        return prefix
 
     @Driver.check_active
     @step()
     def on(self):
-        self.pykush.set_port_state(self.port.index, self.pykush_mod.YKUSH_PORT_STATE_UP)
+        cmd = ['-u', str(self.port.index)]
+        processwrapper.check_output(self._get_ykushcmd_prefix() + cmd)
 
     @Driver.check_active
     @step()
     def off(self):
-        self.pykush.set_port_state(self.port.index, self.pykush_mod.YKUSH_PORT_STATE_DOWN)
+        cmd = ['-d', str(self.port.index)]
+        processwrapper.check_output(self._get_ykushcmd_prefix() + cmd)
 
     @Driver.check_active
     @step()
@@ -212,7 +222,20 @@ class YKUSHPowerDriver(Driver, PowerResetMixin, PowerProtocol):
 
     @Driver.check_active
     def get(self):
-        return self.pykush.get_port_state(self.port.index)
+        cmd = [ '-g', str(self.port.index)]
+
+        output = processwrapper.check_output(self._get_ykushcmd_prefix() + cmd)
+        for line in output.splitlines():
+            if not line:
+                continue
+            prefix, status = line.strip().split(b':', 1)
+            if not prefix == b"Downstream port %d is" % self.port.index:
+                continue
+            if b"UP" in status:
+                return True
+            if b"DOWN" in status:
+                return False
+        raise ExecutionError("Did not find port status in ykushcmd output ({})".format(repr(output)))
 
 @target_factory.reg_driver
 @attr.s(eq=False)

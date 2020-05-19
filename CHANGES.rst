@@ -34,6 +34,7 @@ New Features in 0.3.0
   in some cases.
 - ``labgrid-client write-image`` gained new arguments: ``--partition``,
   ``--skip``, ``--seek``.
+- Yepkit YKUSH use command line tool instead of python library
 
 Breaking changes in 0.3.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~
