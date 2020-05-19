@@ -35,6 +35,8 @@ New Features in 0.3.0
 - ``labgrid-client write-image`` gained new arguments: ``--partition``,
   ``--skip``, ``--seek``.
 - Add power driver to support GEMBIRD SiS-PM Control implementing SISPMCTLPowerDriver.
+- Yepkit YKUSH use command line tool instead of python library and can be accessed
+  remotely
 
 Breaking changes in 0.3.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~

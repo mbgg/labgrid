@@ -361,6 +361,26 @@ class SISPMCTLPowerPortExport(USBGenericExport):
         }
 
 @attr.s(eq=False)
+class YKUSHPowerPortExport(USBGenericExport):
+    """ResourceExport for YEPKIT YKUSH switchable USB hub"""
+
+    def __attrs_post_init__(self):
+        super().__attrs_post_init__()
+
+    def _get_params(self):
+        """Helper function to return parameters"""
+        return {
+            'host': self.host,
+            'busnum': self.local.busnum,
+            'devnum': self.local.devnum,
+            'path': self.local.path,
+            'vendor_id': self.local.vendor_id,
+            'model_id': self.local.model_id,
+            'index': self.local.index,
+            'serial': self.local.serial,
+        }
+
+@attr.s(eq=False)
 class USBPowerPortExport(USBGenericExport):
     """ResourceExport for ports on switchable USB hubs"""
 
@@ -412,6 +432,7 @@ exports["USBMassStorage"] = USBGenericExport
 exports["USBVideo"] = USBGenericExport
 exports["USBTMC"] = USBGenericExport
 exports["SISPMCTLPowerPort"] = SISPMCTLPowerPortExport
+exports["YKUSHPowerPort"] = YKUSHPowerPortExport
 exports["USBPowerPort"] = USBPowerPortExport
 exports["DeditecRelais8"] = USBDeditecRelaisExport
 
